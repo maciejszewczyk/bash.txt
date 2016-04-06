@@ -1,0 +1,325 @@
+﻿0. Jak przetestować skrypt basha bez konieczności jego uruchamiania
+
+bash -n nazwa_skryptu.sh
+
+1. Wyszukiwanie wzorca z kropką '.'
+
+	grep '5\.25' plik
+
+To polecenie wyświeliłoby wszystkie wiersze zawierające 5.25
+
+2. Kropka jako wieloznacznik wyrażeń regularnych.
+
+	grep 'tak.nie' plik
+
+To polecenie wyświetliłoby wiersze zawierające wyrazy tak i nie, oddzielone
+dowolnym pojedyńczym znakiem. Np:
+
+	tak nie
+	tak-nie
+	takinie
+
+3. Jak szybko wyczyścić plik
+
+	> plik
+
+To polcenie spowoduje, że plik będzie miał 0 bajtów
+
+4. Jak usunąć tagi html
+
+	sed 's/<[^>]*>//g' plik
+
+5. Jak usunąć nadmiar spacji z początku
+
+	sed 's/^[ ]*//' plik
+
+6. Jak zmienić nazwy plików z dużej litery na małą
+
+	for i in `ls`; do mv $i `echo $i | tr '[A-Z]' '[a-z]'`; done
+
+7. Jak usunąć puste linie z pliku
+
+	grep -v ^$ plik
+
+8. Jak spakować bardzo dużo plików tar 'em (ponad 14000)
+
+	ls | xargs tar -r -f archiwum.tar
+
+9. Jak wyszukać wzorzec z dolarem '$'
+
+	grep '\$' plik
+
+10. Jak wyszukać wzorzec z ukośnikiem '\'
+
+	grep '\\' plik
+
+11. Jak wczytać wszystkie linie pliku
+
+while read line
+do
+	echo $line
+done < plik.txt
+
+12. Jak sprawdzić wartość zmiennych
+
+	-n string  Zwraca wartość true, jeśli łańcuch znaków string ma wartość (nie jest pusty)
+
+	-z string  Zwraca wartość true, jeśli łańcuch string nie ma wartości (jest pusty)
+
+	string1 = string2  Zwraca wartość true, jeśli łańcuchy znaków string1 i string2 są identyczne
+
+	string1 != string2  Zwraca wartośc true, jeśli łańcuchy znaków string1 i string2 nie są identyczne
+
+	Przykład: 
+
+	if [ -n "$string" ]; then
+	  echo "String ma wartość"
+	fi
+
+13. Operatory dla liczb całkowitych
+
+	int1 -eq int2	int1 równe int2
+	
+	int1 -ne int2	int1 różne od int2
+	
+	int1 -gt int2	int1 większe niż int2
+	
+	int1 -ge int2	int1 większe lub róne int2
+	
+	int1 -lt int2	int1 mniejsze niż int2
+	
+	int1 -le int2	int1 mniejsze lub róne int2
+	
+	Przykład:
+
+	int1 = "6"
+	int2 = "21"
+	if [ "$int1" -ne "$int2" ]; then
+	  echo "Wartości są różne"
+	fi
+
+14. Jak wyświetlić plik linia po lini ale od końca?
+
+	tac plik.txt
+
+15. Jak zrobić łatkę i załatać?
+
+	diff -u przed.txt po.txt > latka
+	patch -p0 < latka
+
+16. Jak zamienić nadmiar spacji na jedną spację.
+
+	sed 's/ [ ]*/ /g'
+
+17. Jak zrobić sleep mniejszy niż 1 sekunda.
+
+	sleep `printf "0.%01d" $[ 5 ]` == sleep 0.5
+
+18. Jak umieścić zmienną shella w wyrażeniu regularnym?a
+
+	$zmienna1=222
+	$zmienna2=333
+	
+	grep "^${zmienna1}tekst${zmienna2}$" plik.txt == grep "^222tekst333$" plik.txt
+
+	sed -i "s/|$NUMER_ONET$/|${NUMER_METEO}/g" users2 (ewentualnie NUMER_ONET w
+	klamrach {}
+
+19. Jak szybko przejrzeć zawartość archiwum tar?
+
+	less archiwum.tar
+
+20. Sprawdzanie liczby argumentów podanych w wierszu poleceń
+
+	if [ "$#" -ne 3 ]; then
+		echo "Sposób użycia: $0 argument_1 argument_2 argument_3"
+	else
+		echo $1 $2 $3
+	fi
+
+21. rot47
+
+	tr '!-~' 'P-~!-O'
+
+22. Podstawienia parametrów
+
+     ${parametr%końcówka}     Usunięcie najmniejszego wzorca końcówka
+     ${parametr%%końcówka}    Usunięcie największego wzorca końcówka
+     ${parametr#przedrostek}  Usunięcie najmniejszego wzorca przedrostek
+     ${parametr##przedrostek} Usunięcie największego wzorca przedrostek
+
+23. Dokładna ilość bajtów
+
+	perl -e 'print "a"x500'
+
+24. Jak wyświetlić to co jest w plik_2, ale nie w plik_1?
+
+	diff plik_1 plik_2 | grep ">" | sed 's/> //g'
+
+25. scp z katalogu lokalnego na inny system
+
+	scp plik.rar user@server.pl:plik.rar
+
+26. scp z servera na lokalny katalog
+
+	scp user@server.pl:plik.rar plik.rar
+
+27. Jak zapisać wynik polecenia i błędy w jednym pliku?
+
+	./skrypt.sh >> wynik.txt 2>&1
+
+28. Jak wyświetlić określoną linię pliku?
+
+	 sed -n '52p' plik.txt
+
+29. let
+
+i=1
+while [ $i -lt 1100 ]
+do
+        echo $i
+        let "++i"
+done
+
+30. Jak wyświetlić okeślone linie z pliku?
+
+	sed -n '45,50p' plik.txt
+
+31. 99% CPU
+
+#!/bin/bash
+while [ 1 ] ; do
+       true
+done
+
+32. iconv
+
+iconv -f UTF-8 -t ISO-8859-2 file.txt
+iconv -f ISO-8859-2 -t UTF-8 file.txt
+iconv -f WINDOWS-1250 -t ISO-8859-2 file.txt
+
+33. grep w bashu
+if [[ "$linia" =~ '<title>' ]]
+
+	jest ~ 10x szybsze od
+
+if [ ! -z `echo "$linia" | grep "<title>"` ]
+
+34. Jak utworzyć plik z wykrzyknikiem w nazwie?
+
+touch -- 'abc!123'
+
+35. Data wczoraj/jutro/pojutrze 
+
+date --date '-2 day' +%d.%m
+
+36. Grep linii zawierających tv i tuż po nim spację, ! lub koniec linii
+
+cat tv.tmp | grep -e "\(tv[! ]\)\|\(tv$\)"
+
+37. Jak whilem wczytać linia po linii zawartość zmiennej zamiast pliku?
+
+while read line; do
+	echo "$line"
+done < <(echo "$Z")
+
+38. Jak po każdym znaku w tekście dodać znak nowej linii?
+
+sed 's/./&\n/g'
+
+39. Jak sprawdzić, czy jakieś pliki w dwóch gałęziach dzrewa SVN różnią się
+    między sobą?
+
+diff -rq devel production | grep -v svn
+
+40. Jak wyszukać pliki sprzed siedmiu dni?
+
+find /var/log/mojelogi.log-???????? -type f -mtime -7
+
+41. Jak wyświetlić plik od linii N do końca pliku?
+
+cat history.txt | sed -n '5390835,$p' > new_history.txt
+
+42. Jak za pomocą diffa wyłuskać numerki, które są w pliku A bez numerków, które
+są w pliku B:
+
+diff A B | grep ">" | cut -d" " -f 2-
+
+43. Grepowanie po gzipowanych plikach
+
+for file in `ls -1 *gz`; do
+  zcat $line | grep --binary-files=text " 656 -> " >> 656.txt
+done
+
+44. Wstawić polecenie pod zmienną
+
+ SED="sed -e 's/1/iphone/g'"
+ echo "1" | eval "${SED}"
+
+45. diff na całych katalogach
+
+ diff -qr katalog_1 katalog_2
+
+46. base64
+
+ echo -n "tajnehaslo" | openssl base64 -e
+
+47. Pobranie ścieżki (katalogu)
+
+ dirname /sciezka/plik
+
+48. Przewijanie ekranu na screenie
+ 
+ Należy nacisnąć:  ctrl+A
+ Następnie: ESC
+ Można przewijać ekran
+
+49. Jak dodać liczby w pliku występujące w jednej kolumnie jedna pod drugą
+
+ cat plik.txt
+
+ 20
+ 80
+ 100
+ 900
+
+ cat plik.txt | sed -e :a -e '$!N;s/\n/+/;ta' | bc
+
+50. Jak dodać komentarz wielolinijkowy
+
+cat 5.sh
+
+#!/bin/bash
+echo "Wyswietl przed komentarzem"
+: '
+To jest komentarz
+echo "To sie nie wyswietli"
+To jest nadal komentarz
+'
+echo "Wyswietl po komentarzu"
+
+51. 
+
+[ "kin" = "kino" ]
+if [ $? == 0 ]; then
+ echo "takie same"
+else
+ echo "rozne"
+fi
+
+52. Jak posortować litery w wyrazie
+
+echo "bliźnię" | grep -o . | sort | tr -d "\n"
+
+53. Zamiana zawartości plików z iso-8859-2 na utf-8
+
+find . -name "*.php" -follow -type f -print0 | xargs -0 sed -i "s/iso-8859-2/utf-8/g"
+find . -name "*.php" | xargs -I _ bash -c 'iconv -f ISO-8859-2 -t UTF-8 _ > _.dat && mv _.dat _'
+
+54. grepowanie plików bez .svn
+
+find . -path '*/.svn' -prune -o -type f -print | xargs grep -i quot
+
+55. Jak wyswietlic pola w awk
+
+awk '{print $1,$2,$3,$4,$5}'
